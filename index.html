@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinQ — Personal Finance Dashboard</title>
+<meta name="description" content="FinQ: track income, expenses and savings goals in one clean dashboard. Built with HTML, CSS and vanilla JavaScript.">
+<meta name="theme-color" content="#23262B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'%3E%3Crect width='44' height='44' rx='12' fill='%237FA89B'/%3E%3Cpath d='M8 30L16 16L23 24L36 8' fill='none' stroke='%2323262B' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================= LOADING SCREEN ============================= -->
+<div class="loader" id="loader">
+    <div class="loader-mark">
+        <svg viewBox="0 0 44 44">
+            <path
+                d="M8 30L16 16L23 24L36 8"
+                stroke="url(#loaderGrad)"
+            />
+            <defs>
+                <linearGradient
+                    id="loaderGrad"
+                    x1="8"
+                    y1="8"
+                    x2="36"
+                    y2="30"
+                    gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#23262B"/>
+                    <stop offset="100%" stop-color="#23262B"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+    <div class="loader-label">FinQ</div>
+    <div class="loader-bar">
+        <span></span>
+    </div>
+</div>
+
+<!-- ============================= APP SHELL ============================= -->
+<div class="app" id="app">
+
+  <!-- ----------- Sidebar ----------- -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <span class="brand-mark">
+          <svg width="20" height="20" viewBox="0 0 44 44" fill="none">
+            <path d="M8 30L16 16L23 24L36 8" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <span class="brand-name">FinQ</span>
+      </div>
+      <button class="sidebar-collapse-btn" id="sidebarCollapseBtn" aria-label="Collapse sidebar">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-label">Overview</div>
+      <button class="nav-item is-active" data-view="dashboard">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-item" data-view="transactions">
+        <svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="4" width="15" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2.5 8H17.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Transactions</span>
+      </button>
+      <button class="nav-item" data-view="analytics">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M3 17V10M10 17V3M17 17V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Analytics</span>
+      </button>
+      <button class="nav-item" data-view="goals">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span>Goals</span>
+      </button>
+
+      <div class="nav-label">Manage</div>
+      <button class="nav-item" data-action="open-modal">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Add Transaction</span>
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.8" stroke="currentColor" stroke-width="1.5"/><path d="M10 2.5V4.5M10 15.5V17.5M2.5 10H4.5M15.5 10H17.5M4.7 4.7L6.1 6.1M13.9 13.9L15.3 15.3M15.3 4.7L13.9 6.1M6.1 13.9L4.7 15.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Settings</span>
+      </button>
+      <button class="nav-item" id="exportBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 2.5V12.5M10 12.5L6 8.5M10 12.5L14 8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 15.5V16.5C3.5 16.9 3.83 17.5 4.5 17.5H15.5C16.17 17.5 16.5 16.9 16.5 16.5V15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Export data</span>
+      </button>
+      <button class="nav-item" id="importBtn">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M10 12.5V2.5M10 2.5L6 6.5M10 2.5L14 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 15.5V16.5C3.5 16.9 3.83 17.5 4.5 17.5H15.5C16.17 17.5 16.5 16.9 16.5 16.5V15.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <span>Import data</span>
+      </button>
+      <input type="file" id="importInput" accept=".csv,.json,text/csv,application/json" hidden>
+    </nav>
+
+    <div class="sidebar-bottom">
+      
+      <button class="user-chip" id="userChip" type="button" aria-haspopup="true" aria-expanded="false">
+        <div class="user-avatar" id="sidebarUserAvatar">AK</div>
+        <div class="user-meta">
+          <div class="user-name" id="sidebarUserName">Aria Kapoor</div>
+          <div class="user-email" id="sidebarUserEmail">aria@finQ.app</div>
+        </div>
+        <svg class="user-chip-chevron" width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M5 8L10 13L15 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <!-- ----------- Main ----------- -->
+  <main class="main">
+
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5.5H17M3 10H17M3 14.5H17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <div class="topbar-title">
+        <h1 id="pageTitle">Good to see you, Aria</h1>
+        <p id="pageSubtitle">Here's what's happening with your money today.</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-field">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <input type="text" id="topSearch" placeholder="Search transactions…" />
+          <kbd>/</kbd>
+        </div>
+        <button class="btn btn-primary" id="addTransactionBtn">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Add transaction
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ================= DASHBOARD VIEW ================= -->
+      <section class="view is-active" id="view-dashboard">
+
+        <!-- Stat cards -->
+        <div class="stat-grid">
+          <div class="stat-card stat-income fade-up" style="--delay:0">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 12L8 8L11.5 11L16 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 6H16V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="stat-top">
+              <span class="stat-label">Total income</span>
+              <span class="stat-pill stat-pill-up" id="incomeTrend">+0%</span>
+            </div>
+            <div class="stat-value" id="statIncome">₹0</div>
+            <div class="stat-foot">vs last month</div>
+          </div>
+
+          <div class="stat-card stat-expense fade-up" style="--delay:1">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M4 8L8 12L11.5 9L16 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 14H16V10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="stat-top">
+              <span class="stat-label">Total expenses</span>
+              <span class="stat-pill stat-pill-down" id="expenseTrend">+0%</span>
+            </div>
+            <div class="stat-value" id="statExpense">₹0</div>
+            <div class="stat-foot">vs last month</div>
+          </div>
+
+          <div class="stat-card stat-balance fade-up" style="--delay:2">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="5" width="15" height="10" rx="2.5" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 8.5H17.5" stroke="currentColor" stroke-width="1.8"/></svg>
+            </div>
+            <div class="stat-top">
+              <span class="stat-label">Remaining balance</span>
+              <span class="stat-pill" id="balanceTrend">Net</span>
+            </div>
+            <div class="stat-value" id="statBalance">₹0</div>
+            <div class="stat-foot">available this period</div>
+          </div>
+
+          <div class="stat-card stat-savings fade-up" style="--delay:3">
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M10 6V10L12.5 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </div>
+            <div class="stat-top">
+              <span class="stat-label">Savings rate</span>
+              <span class="stat-pill" id="savingsTag">Healthy</span>
+            </div>
+            <div class="stat-value" id="statSavings">0%</div>
+            <div class="progress-track"><div class="progress-fill" id="savingsBar"></div></div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="panel-grid">
+          <div class="panel chart-panel fade-up" style="--delay:4">
+            <div class="panel-head">
+              <div>
+                <h2>Income vs. expenses</h2>
+                <p>Monthly comparison over recent activity</p>
+              </div>
+              <div class="legend-chip-group">
+                <span class="legend-chip"><i style="background:var(--chart-income)"></i>Income</span>
+                <span class="legend-chip"><i style="background:var(--chart-expense)"></i>Expenses</span>
+              </div>
+            </div>
+            <div class="chart-holder">
+              <canvas id="barChart"></canvas>
+            </div>
+          </div>
+
+          <div class="panel chart-panel fade-up" style="--delay:5">
+            <div class="panel-head">
+              <div>
+                <h2>Where it goes</h2>
+                <p>Expense breakdown by category</p>
+              </div>
+            </div>
+            <div class="chart-holder chart-holder-donut chart-holder-gauge">
+              <canvas id="pieChart"></canvas>
+              <div class="donut-center" id="donutCenter">
+                <span id="donutTotal">₹0</span>
+                <small>Total Spent</small>
+              </div>
+            </div>
+            <div class="donut-legend" id="donutLegend"></div>
+          </div>
+        </div>
+
+        <!-- Recent activity + summary -->
+        <div class="panel-grid panel-grid-secondary">
+          <div class="panel fade-up" style="--delay:6">
+            <div class="panel-head">
+              <div>
+                <h2>Recent Activity</h2>
+                <p>Your Latest Transactions</p>
+                
+              </div>
+              <button class="link-btn" data-view-link="transactions">View all</button>
+            </div>
+            <div class="activity-list" id="recentActivity"></div>
+          </div>
+
+          <div class="panel fade-up" style="--delay:7">
+            <div class="panel-head">
+              <div>
+                <h2> Monthly Summary </h2>
+                <p>Category-wise spending this period</p>
+              </div>
+            </div>
+            <div class="summary-list" id="monthlySummary"></div>
+          </div>
+        </div>
+        <div class="panel-grid panel-grid-secondary">
+          <div class="panel fade-up" style="--delay:8">
+            <div class="panel-head"><div><h2>My Goals</h2><p>Progress on what you're saving for</p></div><button class="link-btn" data-view-link="goals">View all</button></div>
+            <div class="goal-list" id="goalsPreview"></div>
+          </div>
+          <div class="panel fade-up" style="--delay:9">
+            <div class="panel-head"><div><h2>Quick actions</h2><p>Jump straight to what you need</p></div></div>
+            <div class="quick-grid">
+              <button class="quick-tile" data-quick="income" type="button"><b>💰</b>Add income</button>
+              <button class="quick-tile" data-quick="expense" type="button"><b>🧾</b>Add expense</button>
+              <button class="quick-tile" data-quick="goal" type="button"><b>🎯</b>New goal</button>
+              <button class="quick-tile" data-quick="export" type="button"><b>📄</b>Export CSV</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TRANSACTIONS VIEW ================= -->
+      <section class="view" id="view-transactions">
+        <div class="panel fade-up">
+          <div class="panel-head panel-head-table">
+            <div>
+              <h2>All transactions</h2>
+              <p id="txCount">0 transactions</p>
+            </div>
+            <div class="table-tools">
+              <div class="search-field search-field-table">
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.6"/><path d="M17 17L13.5 13.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                <input type="text" id="tableSearch" placeholder="Search…" />
+              </div>
+              <select class="select-field" id="filterType">
+                <option value="all">All types</option>
+                <option value="income">Income</option>
+                <option value="expense">Expense</option>
+              </select>
+              <select class="select-field" id="filterCategory">
+                <option value="all">All categories</option>
+              </select>
+              <select class="select-field" id="sortField">
+                <option value="date-desc">Newest first</option>
+                <option value="date-asc">Oldest first</option>
+                <option value="amount-desc">Amount: high to low</option>
+                <option value="amount-asc">Amount: low to high</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="tx-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Notes</th>
+                  <th>Date</th>
+                  <th class="th-right">Amount</th>
+                  <th class="th-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txTableBody"></tbody>
+            </table>
+            <div class="empty-state" id="emptyState">
+              <svg width="120" height="96" viewBox="0 0 120 96" fill="none">
+                <rect x="10" y="18" width="76" height="58" rx="10" fill="#E7E6E0"/>
+                <rect x="10" y="18" width="76" height="58" rx="10" stroke="#CFCDC5" stroke-width="1.5"/>
+                <path d="M24 40H72M24 52H60M24 64H48" stroke="#A8ABAF" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="94" cy="66" r="20" fill="#7FA89B"/>
+                <path d="M94 58V66L100 71" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <h3>No transactions yet</h3>
+              <p>Add your first income or expense to start tracking your money.</p>
+              <button class="btn btn-primary" id="emptyStateBtn">Add transaction</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= GOALS VIEW ================= -->
+      <section class="view" id="view-goals">
+        <div class="panel fade-up">
+          <div class="panel-head panel-head-table">
+            <div><h2>My Goals</h2><p>Save towards the things that matter</p></div>
+            <button class="btn btn-primary" data-quick="goal" type="button">+ New goal</button>
+          </div>
+          <div class="goal-grid" id="goalsFull"></div>
+        </div>
+      </section>
+
+      <!-- ================= SETTINGS VIEW ================= -->
+      <section class="view" id="view-settings">
+        <div class="panel fade-up">
+          <div class="panel-head"><div><h2>Appearance</h2><p>Choose how FinQ looks. System follows your device and updates automatically.</p></div></div>
+          <div class="theme-seg" role="radiogroup" aria-label="Theme">
+            <button type="button" class="theme-opt" data-theme-pref="light">☀️ Light</button>
+            <button type="button" class="theme-opt" data-theme-pref="dark">🌙 Dark</button>
+            <button type="button" class="theme-opt" data-theme-pref="system">💻 System</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= ANALYTICS VIEW ================= -->
+      <section class="view" id="view-analytics">
+        <div class="panel-grid">
+          <div class="panel chart-panel fade-up">
+            <div class="panel-head">
+              <div><h2>Category Breakdown</h2><p>All-time Expense Distribution</p></div>
+            </div>
+            <div class="chart-holder">
+              <canvas id="analyticsPie"></canvas>
+            </div>
+          </div>
+          <div class="panel chart-panel fade-up">
+            <div class="panel-head">
+              <div><h2>Cash flow trend</h2><p>Income vs. expenses by month</p></div>
+            </div>
+            <div class="chart-holder">
+              <canvas id="analyticsBar"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="panel fade-up">
+          <div class="panel-head">
+            <div><h2>Category totals</h2><p>Lifetime spend per category</p></div>
+          </div>
+          <div class="summary-list summary-list-wide" id="analyticsSummary"></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- ============================= ADD TRANSACTION MODAL ============================= -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Add transaction</h2>
+      <button class="modal-close" id="modalCloseBtn" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <form id="txForm" novalidate>
+      <div class="type-switch">
+        <button type="button" class="type-option is-active" data-type="expense" id="typeExpenseBtn">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M4 8L8 12L11.5 9L16 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Expense
+        </button>
+        <button type="button" class="type-option" data-type="income" id="typeIncomeBtn">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M4 12L8 8L11.5 11L16 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Income
+        </button>
+      </div>
+
+      <div class="field">
+        <label for="amountInput">Amount</label>
+        <div class="amount-field">
+          <span>₹</span>
+          <input type="number" id="amountInput" placeholder="0.00" step="0.01" min="0" inputmode="decimal">
+        </div>
+        <span class="field-error" id="amountError"></span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="categoryInput">Category</label>
+          <select id="categoryInput">
+            <option value="">Select category</option>
+          </select>
+          <span class="field-error" id="categoryError"></span>
+        </div>
+        <div class="field">
+          <label for="dateInput">Date</label>
+          <input type="date" id="dateInput">
+          <span class="field-error" id="dateError"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="notesInput">Notes <span class="optional-tag">optional</span></label>
+        <textarea id="notesInput" rows="2" placeholder="Add a short note…" maxlength="140"></textarea>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="modalCancelBtn">Cancel</button>
+        <button type="button" class="btn btn-primary btn-ripple" id="saveTransactionBtn">Save transaction</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============================= MOBILE BOTTOM NAV ============================= -->
+<nav class="bottom-nav" aria-label="Main">
+  <button class="bn-item is-active" data-view-link="dashboard" type="button" aria-label="Dashboard"><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.6"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  <button class="bn-item" data-view-link="transactions" type="button" aria-label="Transactions"><svg viewBox="0 0 20 20" fill="none"><rect x="2.5" y="4" width="15" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M2.5 8H17.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  <button class="bn-item bn-add" id="bnAddBtn" type="button" aria-label="Add transaction"><svg viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+  <button class="bn-item" data-view-link="goals" type="button" aria-label="Goals"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.6"/><circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.6"/></svg></button>
+  <button class="bn-item" data-view-link="analytics" type="button" aria-label="Analytics"><svg viewBox="0 0 20 20" fill="none"><path d="M3 17V10M10 17V3M17 17V13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+</nav>
+
+<!-- ============================= GOAL MODALS ============================= -->
+<div class="modal-overlay" id="goalModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head"><h2>New goal</h2><button class="modal-close" id="goalModalCloseBtn" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <div class="field"><label for="goalNameInput">Goal name</label><input type="text" id="goalNameInput" placeholder="e.g. Buy a laptop" maxlength="40"></div>
+    <div class="field-row">
+      <div class="field"><label for="goalTargetInput">Target amount (₹)</label><input type="number" id="goalTargetInput" min="1" placeholder="25000"></div>
+      <div class="field"><label for="goalSavedInput">Saved so far <span class="optional-tag">optional</span></label><input type="number" id="goalSavedInput" min="0" placeholder="0"></div>
+    </div>
+    <div class="field"><label for="goalIconInput">Icon</label><select id="goalIconInput"><option>🎯</option><option>💻</option><option>🚗</option><option>✈️</option><option>🏠</option><option>🎓</option><option>🎁</option><option>📱</option></select><span class="field-error" id="goalError"></span></div>
+    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="goalModalCancelBtn">Cancel</button><button type="button" class="btn btn-primary" id="saveGoalBtn">Save goal</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="fundModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head"><h2 id="fundTitle">Add funds</h2><button class="modal-close" id="fundModalCloseBtn" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div>
+    <div class="field"><label for="fundAmountInput">Amount (₹)</label><input type="number" id="fundAmountInput" min="1" placeholder="500"><span class="field-error" id="fundError"></span></div>
+    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="fundModalCancelBtn">Cancel</button><button type="button" class="btn btn-primary" id="saveFundBtn">Add funds</button></div>
+  </div>
+</div>
+
+<!-- ============================= TOASTS ============================= -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ============================= ACCOUNT POPOVER ============================= -->
+<div class="account-popover" id="accountPopover">
+  <div class="account-popover-header">
+    <span class="account-popover-avatar" id="accountPopoverAvatar">AK</span>
+    <span class="account-popover-meta">
+      <span class="account-popover-name" id="accountPopoverName">Aria Kapoor</span>
+      <span class="account-popover-email" id="accountPopoverEmail">aria@finQ.app</span>
+    </span>
+  </div>
+  <div class="account-popover-divider"></div>
+  <div class="account-popover-label">Switch account</div>
+  <div class="account-popover-list" id="accountSwitchList"></div>
+  <div class="account-popover-divider"></div>
+  <button class="account-popover-action" id="addAccountBtn" type="button">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Add new account
+  </button>
+  <button class="account-popover-action is-danger" id="logoutBtn" type="button">
+    <svg viewBox="0 0 20 20" fill="none"><path d="M7.5 17.5H4.5C3.4 17.5 2.5 16.6 2.5 15.5V4.5C2.5 3.4 3.4 2.5 4.5 2.5H7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 14L17.5 10L13.5 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 10H7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Log out
+  </button>
+</div>
+
+<!-- ============================= ADD ACCOUNT MODAL ============================= -->
+<div class="modal-overlay" id="accountModalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="accountModalTitle">
+    <div class="modal-head">
+      <h2 id="accountModalTitle">Add account</h2>
+      <button class="modal-close" id="accountModalCloseBtn" type="button" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3L13 13M13 3L3 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label for="accountNameInput">Name</label>
+      <input type="text" id="accountNameInput" placeholder="e.g. Shree" maxlength="60">
+      <span class="field-error" id="accountNameError"></span>
+    </div>
+    <div class="field">
+      <label for="accountEmailInput">Email <span class="optional-tag">optional</span></label>
+      <input type="email" id="accountEmailInput" placeholder="you@example.com" maxlength="100">
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-ghost" id="accountModalCancelBtn">Cancel</button>
+      <button type="button" class="btn btn-primary btn-ripple" id="saveAccountBtn">Save account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================= AUTH GATE (sign in / logged out) ============================= -->
+<div class="auth-gate" id="authGate">
+  <div class="auth-gate-card">
+    <div class="auth-gate-brand">
+      <span class="brand-mark">
+        <svg width="20" height="20" viewBox="0 0 44 44" fill="none">
+          <path d="M8 30L16 16L23 24L36 8" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      <span class="auth-gate-brand-name">FinQ</span>
+    </div>
+    <h2>Welcome back</h2>
+    <p>Choose an account to continue, or add a new one.</p>
+    <div class="auth-account-list" id="authAccountList"></div>
+    <button class="btn btn-primary auth-gate-add-btn" id="authAddAccountBtn" type="button">
+      <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 4V16M4 10H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      Add new account
+    </button>
+  </div>
+</div>
+
+<script>
+  // Chart.js loader with fallback CDNs. The exact version this app
+  // was built against (4.4.4) was never published to cdnjs, which
+  // is why charts previously stayed blank — this tries jsDelivr
+  // first (which does have it), then two backups.
+  (function loadChartJs(urls, i) {
+    if (i >= urls.length) {
+      console.error("FinQ: could not load Chart.js from any CDN — charts will stay empty. Check your internet connection.");
+      return;
+    }
+    const s = document.createElement("script");
+    s.src = urls[i];
+    s.onload = () => { if (window.__finqRenderCharts) window.__finqRenderCharts(); };
+    s.onerror = () => loadChartJs(urls, i + 1);
+    document.head.appendChild(s);
+  })([
+    "https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js",
+    "https://unpkg.com/chart.js@4.4.4/dist/chart.umd.min.js"
+  ], 0);
+</script>
+<script src="js/script.js"></script>
+</body>
+</html>
