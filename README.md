@@ -2,14 +2,6 @@ FinQ — Personal Finance Dashboard
 
 A clean, responsive dashboard to track income, expenses and savings goals. Built with HTML, CSS and vanilla JavaScript (no framework) and Chart.js.
 
-## Screenshots
-
-### Desktop
-<img src="desktop-light.png" width="49%"> <img src="desktop-dark.png" width="49%">
-
-### Mobile
-<img src="mobile-light.png" width="24%"> <img src="mobile-dark.png" width="24%">
-
 Features
 Add, search, filter, sort and delete income/expense transactions
 Dashboard with income vs. expenses chart, spending gauge, recent activity and monthly category summary
