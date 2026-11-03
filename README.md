@@ -7,8 +7,8 @@ A personal finance dashboard to track income, expenses, and savings goals. Built
 ### Desktop
 
 <p>
-  <img src="docs/desktop-light.png" alt="FinQ dashboard in light theme on desktop" width="49%">
-  <img src="docs/desktop-dark.png" alt="FinQ dashboard in dark theme on desktop" width="49%">
+  ![FinQ Light Theme screenshot](desktop-light.png)
+  ![FinQ Dark Theme screenshot](desktop-dark.png)
 </p>
 
 ### Mobile
